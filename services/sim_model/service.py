@@ -14,7 +14,7 @@ siamise_net = build_siamise_network(emb_model, target_shape)
 def _get_model():
     model = SiameseModel(siamise_net)
     model.built = True
-    # model.load_weights("")
+    model.load_weights("services/sim_model/weights.h5")
     return model
 
 def predict(first_paths, second_paths):

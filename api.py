@@ -38,5 +38,4 @@ async def test_simi(data: SimRequest):
     first = [storage.get(i) for i in data.first]
     second = [storage.get(i) for i in data.second]
     res = predict(first, second)
-    print(res)
     return {'res': res.tolist()} 
