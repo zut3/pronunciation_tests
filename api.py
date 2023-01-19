@@ -1,8 +1,11 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import FileResponse
-from service import segment, clip, AudioSpeech
-import storage
+from services.shared import AudioSpeech
+from services.segmentation import segment, clip
+from services.sim_model.service import predict 
+import storage 
 import os
+from models import SimRequest
 
 app = FastAPI()
 
@@ -29,3 +32,11 @@ async def get_file(uid: str):
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse('storage/' + uid)
+
+@app.post('/simi')
+async def test_simi(data: SimRequest):
+    first = [storage.get(i) for i in data.first]
+    second = [storage.get(i) for i in data.second]
+    res = predict(first, second)
+    print(res)
+    return {'res': res.tolist()} 

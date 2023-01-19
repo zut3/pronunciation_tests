@@ -7,31 +7,14 @@ import librosa
 import soundfile as sf
 import utils
 import ctc_segmentation as cs
-
+from .shared import AudioSpeech
 
 MODEL = "QuartzNet15x5Base-En"
 
-class AudioSpeech:
-  def __init__(self, signal: np.ndarray, sample_rate: int):
-    self.signal = signal
-    self.sample_rate = sample_rate
-
-  @staticmethod
-  def load_audio(filename: str):
-    audio, sr = librosa.load(filename)
-    if sr == 16000:
-      return AudioSpeech(audio, sr)
-
-    audio = librosa.resample(audio, sr, 16000)
-    return AudioSpeech(audio, 16000)
-  
-  def write(self, filename):
-      sf.write(filename, self.signal, self.sample_rate, subtype='PCM_24')
-
 def clip(start: float, end: float, audio: AudioSpeech):
-  start = int(start * audio.sample_rate)
-  end = int(end * audio.sample_rate)
-  return AudioSpeech(audio.signal[start:end], audio.sample_rate)
+  start = round(start * audio.sample_rate, 0)
+  end = round(end * audio.sample_rate, 0)
+  return AudioSpeech(audio.signal[int(start):int(end)], audio.sample_rate)
 
 def split_text(transcript, vocabulary):
   voc_symbols = list(vocabulary)
