@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow_addons.losses import contrastive_loss
 from tensorflow.keras.applications.resnet import ResNet50, preprocess_input
 from services.shared import AudioSpeech
+import numpy as np
 
 def get_mel(audio):
     spec = tf.signal.stft(audio, frame_length=255, frame_step=128)
@@ -40,3 +41,8 @@ def load_audio(audio: AudioSpeech, target_shape):
   spec = tf.image.resize(spec, target_shape)
 
   return spec
+
+def scale(X, min, max):
+      std = (X - min) / (max - min)
+      std *= max - min
+      return (std + min).astype(np.int32)

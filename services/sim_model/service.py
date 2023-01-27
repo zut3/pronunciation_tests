@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.applications.resnet import ResNet50, preprocess_input
 from ._models import build_emb_model, build_siamise_network, SiameseModel
-from ._utils import load_audio
+from ._utils import load_audio, scale
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
@@ -28,7 +28,7 @@ def predict(first_paths, second_paths):
     
         dist = model.predict([first, second])[0]
         predicted.append(dist)
-    
-    res = scaler.fit_transform((1 - np.array(predicted)).reshape(-1,1))
-    return np.concatenate(res, 0).astype(np.int32)
+    print(predicted) 
+    res = scale(np.array(predicted), 1, 5)
+    return 6 - res.astype(np.int32)
 
