@@ -1,7 +1,6 @@
 import librosa
 import soundfile as sf
-import audioread.ffdec
-
+import numpy as np
 
 class AudioSpeech:
   def __init__(self, signal, sample_rate: int):
@@ -10,14 +9,10 @@ class AudioSpeech:
 
   @staticmethod
   def load_audio(filename: str):
-    filename = audioread.ffdec.FFmpegAudioFile(filename)
     audio, sr = librosa.load(filename)
-  
-    if sr == 16000:
-      return AudioSpeech(audio, sr)
+    audio = audio[~np.isnan(audio)]
 
-    audio = librosa.resample(audio, sr, 16000)
-    return AudioSpeech(audio, 16000)
+    return AudioSpeech(audio, sr)  
 
   def write(self, filename, format_=None):
       sf.write(filename, self.signal, self.sample_rate, format=format_, subtype='PCM_24')

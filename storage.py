@@ -13,6 +13,7 @@ def write(audio: AudioSpeech):
     uid, fp = write_to_fp()
     audio.write('./storage/' + uid)
     fp.close()
+
     return uid
 
    

@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, HTTPException, Body
 from fastapi.responses import FileResponse
 from services.shared import AudioSpeech
 from services.segmentation import segment, clip
-from services.sim_model.service import predict 
+from services.sim_model.service import sim
 from services.tts import text_to_speech
 import storage 
 import os
@@ -35,11 +35,11 @@ async def get_file(uid: str):
     return FileResponse('storage/' + uid)
 
 @app.post('/simi')
-async def test_simi(data: SimRequest):
-    first = [storage.get(i) for i in data.first]
-    second = [storage.get(i) for i in data.second]
-    res = predict(first, second)
-    return {'res': res.tolist()} 
+async def test_simi(uid: str = Body(), text: str = Body()):
+    audio = storage.get(uid)
+    simi = sim(audio, text)
+
+    return {'res': round(simi)}
 
 @app.post('/tts')
 async def tts(text: str = Body()):

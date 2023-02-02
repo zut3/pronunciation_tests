@@ -6,8 +6,8 @@ import storage
 
 def text_to_speech(text: str):
     uid, fp = storage.write_to_fp()
-
     tts = gTTS(text.strip())
     tts.write_to_fp(fp)
+    fp.close()
 
     return uid   
