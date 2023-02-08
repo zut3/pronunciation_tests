@@ -3,19 +3,19 @@ from fastapi.responses import FileResponse
 from services.shared import AudioSpeech
 from services.segmentation import segment, clip
 from services.sim_model.service import sim
-from services.tts import text_to_speech
 import storage 
 import os
 from models import SimRequest
 
 app = FastAPI()
 
-@app.post('/upload')
-async def main(file: UploadFile, text: str):
+@app.post('/seg')
+async def seg(file: UploadFile, text: str):
     path = 'files/' + file.filename
     with open(path, 'wb') as f:
         data = await file.read()
         f.write(data)
+    file.close()
 
     audio = AudioSpeech.load_audio(path)
     segments = segment(path, text.strip())
@@ -34,6 +34,15 @@ async def get_file(uid: str):
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse('storage/' + uid)
 
+@app.post('/storage/upload')
+async def upload_file(file: UploadFile):
+    uid, fp = storage.write_to_fp()
+    fp.write(await file.read())
+    fp.close()
+    file.close()
+
+    return uid
+
 @app.post('/simi')
 async def test_simi(uid: str = Body(), text: str = Body()):
     audio = storage.get(uid)
@@ -41,7 +50,3 @@ async def test_simi(uid: str = Body(), text: str = Body()):
 
     return {'res': round(simi)}
 
-@app.post('/tts')
-async def tts(text: str = Body()):
-  uid = text_to_speech(text.strip()) 
-  return {'res': uid}
