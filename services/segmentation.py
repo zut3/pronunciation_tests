@@ -8,6 +8,7 @@ import soundfile as sf
 import utils
 import ctc_segmentation as cs
 from .shared import AudioSpeech
+import storage
 
 MODEL = "QuartzNet15x5Base-En"
 
