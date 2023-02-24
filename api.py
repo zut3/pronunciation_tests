@@ -8,6 +8,7 @@ import os
 from models import SimRequest
 import numpy as np
 import re
+import db
 
 app = FastAPI()
 
@@ -73,3 +74,9 @@ async def get_score(uid: str = Body(), text: str = Body()):
         res.append(sim(audio, sentences[i]))
     
     return {'score': round(np.array(res).mean())}
+
+@app.get('/text')
+async def get_text():
+    _, text = await db.get_random()
+    return {'text': text}
+    
