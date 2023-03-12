@@ -44,7 +44,7 @@ async def upload_file(file: UploadFile):
     fp.close()
     file.close()
 
-    return uid
+    return {'uid': uid}
 
 @app.post('/simi')
 async def test_simi(uid: str = Body(), text: str = Body()):
